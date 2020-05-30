@@ -13,6 +13,6 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} src)
 
-add_executable(DodgySquare src/Main.cpp src/Entity.cpp src/Game.cpp src/Timer.cpp src/Background.cpp)
+add_executable(DodgySquare src/Main.cpp src/Entity.cpp src/Game.cpp src/Timer.cpp src/Background.cpp src/Player.cpp)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 target_link_libraries(DodgySquare ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})

@@ -8,6 +8,7 @@
 
 #include "Background.h"
 #include "Timer.h"
+#include "Player.h"
 
 #define FPS 60
 #define FPS_TICKS 1000 / FPS
@@ -29,6 +30,7 @@ private:
     Background* background_;
     Timer* fpsTimer_;
     Timer* capTimer_;
+    Player* player_;
 
     void Clean();
     void Update();

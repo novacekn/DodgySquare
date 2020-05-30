@@ -40,6 +40,7 @@ void Game::Run() {
     background_ = new Background(renderer_);
     fpsTimer_ = new Timer();
     capTimer_ = new Timer();
+    player_ = new Player(renderer_);
 
     frameCount_ = 0;
 
@@ -55,6 +56,8 @@ void Game::Run() {
                     break;
             }
         }
+
+        player_->HandleInput();
 
         fps_ = frameCount_ / (fpsTimer_->GetTicks() / 1000.0f);
         if (fps_ > 2000000) {
@@ -78,6 +81,7 @@ void Game::Run() {
     delete background_;
     delete fpsTimer_;
     delete capTimer_;
+    delete player_;
 
     Clean();
     SDL_Quit();
@@ -90,6 +94,7 @@ void Game::Render() {
     SDL_RenderClear(renderer_);
 
     background_->Render();
+    player_->Render();
 
     SDL_RenderPresent(renderer_);
 }
