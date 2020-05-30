@@ -28,6 +28,8 @@ private:
 
     unsigned int lastTick_, fpsTick_, fps_, frameCount_;
 
+    bool running_;
+
     Background* background_;
     Timer* fpsTimer_;
     Timer* capTimer_;
@@ -39,6 +41,7 @@ private:
     void Clean();
     void Update();
     void Render();
+    bool CheckCollision();
 };
 
 #endif

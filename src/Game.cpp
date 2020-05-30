@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Game.h"
 
 Game::Game() {
@@ -33,7 +36,7 @@ void Game::Clean() {
 }
 
 void Game::Run() {
-    bool running = true;
+    bool running_ = true;
 
     SDL_ShowCursor(SDL_DISABLE);  // Do not show the cursor
 
@@ -46,13 +49,13 @@ void Game::Run() {
 
     fpsTimer_->Start();
 
-    while (running) {
+    while (running_) {
         capTimer_->Start();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
-                    running = false;
+                    running_ = false;
                     break;
             }
         }
@@ -65,7 +68,7 @@ void Game::Run() {
         }
 
         int random = rand() % 100;
-        if (random < 25) {
+        if (random < 20) {  // Spawn enemy squares randomly based on this chance
             enemy_ = new Enemy(renderer_);
             enemies_.push_back(enemy_);
         }
@@ -79,6 +82,10 @@ void Game::Run() {
 
         snprintf(buf, 100, "DodgySquare (FPS: %u)", fps_);
         SDL_SetWindowTitle(window_, buf);
+
+        if (CheckCollision()) {  // If a collision is detected, the game is over
+            running_ = false;
+        }
 
         Update();
         Render();
@@ -100,8 +107,6 @@ void Game::Run() {
 void Game::Update() {
     for (auto enemy : enemies_) {
         enemy->Update();
-        if (player_->Collides(enemy)) {  // Check if player collides with the enemy
-        }
     }
 
     // Remove enemies that are not alive
@@ -125,4 +130,13 @@ void Game::Render() {
     }
 
     SDL_RenderPresent(renderer_);
+}
+
+bool Game::CheckCollision() {
+    for (auto enemy : enemies_) {
+        if (player_->Collides(enemy)) {
+            return true;
+        }
+    }
+    return false;
 }
