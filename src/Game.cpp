@@ -57,7 +57,7 @@ void Game::Run() {
             }
         }
 
-        player_->HandleInput();
+        player_->Move();
 
         fps_ = frameCount_ / (fpsTimer_->GetTicks() / 1000.0f);
         if (fps_ > 2000000) {
@@ -100,6 +100,8 @@ void Game::Run() {
 void Game::Update() {
     for (auto enemy : enemies_) {
         enemy->Update();
+        if (player_->Collides(enemy)) {  // Check if player collides with the enemy
+        }
     }
 
     // Remove enemies that are not alive

@@ -15,6 +15,9 @@ Enemy::Enemy(SDL_Renderer* renderer) : Entity(renderer) {
     
     x = rand() % (SCREEN_WIDTH - (int)width);  // Spawn at random x coordinate
     y = -height;  // Spawn out of play screen
+
+    collider_.x = width;
+    collider_.y = height;
 }
 
 Enemy::~Enemy() { SDL_DestroyTexture(texture_); }
@@ -37,6 +40,4 @@ void Enemy::Render() {
     SDL_RenderCopy(renderer, texture_, 0, &dstRect);
 }
 
-bool Enemy::IsAlive() {
-    return alive_;
-}
+bool Enemy::IsAlive() { return alive_; }

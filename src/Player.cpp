@@ -10,6 +10,9 @@ Player::Player(SDL_Renderer* renderer) : Entity(renderer) {
     x = SCREEN_WIDTH / 2;
     y = SCREEN_HEIGHT - height;
     velocity_ = 5.0f;
+
+    collider_.x = width;
+    collider_.y = height;
 }
 
 Player::~Player() { SDL_DestroyTexture(texture_); }
@@ -25,7 +28,7 @@ void Player::Render() {
     SDL_RenderCopy(renderer, texture_, 0, &dstRect);
 }
 
-void Player::HandleInput() {
+void Player::Move() {
     const Uint8 *keystates = SDL_GetKeyboardState(NULL);
 
     if (keystates[SDL_SCANCODE_W] && y >= 0) {

@@ -16,7 +16,8 @@ public:
     bool IsAlive();
 
 private:
-SDL_Texture* texture_;
+    SDL_Texture* texture_;
+    SDL_Rect collider_;
     bool alive_;
     float velocity_;
     std::vector<std::string> files_ = {"../res/BigEnemy.png", "../res/SmallEnemy.png"};

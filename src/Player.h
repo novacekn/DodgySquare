@@ -10,10 +10,11 @@ public:
 
     void Update();
     void Render();
-    void HandleInput();
+    void Move();
 
 private:
     SDL_Texture* texture_;
+    SDL_Rect collider_;
     float velocity_;
 };
 
