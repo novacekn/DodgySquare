@@ -9,6 +9,7 @@
 #include "Background.h"
 #include "Timer.h"
 #include "Player.h"
+#include "Enemy.h"
 
 #define FPS 60
 #define FPS_TICKS 1000 / FPS
@@ -31,6 +32,9 @@ private:
     Timer* fpsTimer_;
     Timer* capTimer_;
     Player* player_;
+    Enemy* enemy_;
+    
+    std::vector<Enemy*> enemies_;
 
     void Clean();
     void Update();

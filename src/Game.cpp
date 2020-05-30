@@ -64,6 +64,12 @@ void Game::Run() {
             fps_ = 0;
         }
 
+        int random = rand() % 100;
+        if (random < 25) {
+            enemy_ = new Enemy(renderer_);
+            enemies_.push_back(enemy_);
+        }
+
         char buf[100];
         frameCount_++;
         int frameTicks = capTimer_->GetTicks();
@@ -78,6 +84,10 @@ void Game::Run() {
         Render();
     }
 
+    for (auto enemy : enemies_) {
+        delete enemy;
+    }
+
     delete background_;
     delete fpsTimer_;
     delete capTimer_;
@@ -87,7 +97,19 @@ void Game::Run() {
     SDL_Quit();
 }
 
-void Game::Update() {}
+void Game::Update() {
+    for (auto enemy : enemies_) {
+        enemy->Update();
+    }
+
+    // Remove enemies that are not alive
+    for (size_t i = 0; i < enemies_.size(); ++i) {
+        if (!enemies_[i]->IsAlive()) {
+            delete enemies_[i];
+            enemies_.erase(enemies_.begin() + i);
+        }
+    }
+}
 
 void Game::Render() {
     SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
@@ -95,6 +117,10 @@ void Game::Render() {
 
     background_->Render();
     player_->Render();
+
+    for (auto enemy : enemies_) {
+        enemy->Render();
+    }
 
     SDL_RenderPresent(renderer_);
 }
