@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <fstream>
 #include <sstream>
+#include <thread>
+#include <chrono>
 
 #include "Game.h"
 
@@ -12,18 +14,22 @@ Game::Game() {
 
 Game::~Game() {}
 
+void Game::SetScore() {
+    while (!title_) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        score_++;
+    }
+}
+
 bool Game::Init() {
     SDL_Init(SDL_INIT_EVERYTHING);
     TTF_Init();
-    window_ = SDL_CreateWindow("DodgySquare", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    if (!window_) {
-        return false;
-    }
+    
+    window_ = SDL_CreateWindow("Dodgy Square", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (!window_) { return false; }
 
     renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
-    if (!renderer_) {
-        return false;
-    }
+    if (!renderer_) { return false; }
 
     Score();
     Message("Dodgy Square");  // Title screen
@@ -63,6 +69,7 @@ void Game::HighScore(std::string path) {
         while (std::getline(filestream, line)) {
             std::istringstream linestream(line);
             linestream >> high;
+            highScore_ = std::stoi(high);  // Set the high score private variable
             high_score += high;
         }
     }
@@ -80,6 +87,15 @@ void Game::HighScore(std::string path) {
 
     SDL_FreeSurface(msg);
     TTF_CloseFont(font);
+}
+
+void Game::SetHighScore() {
+    if (score_ > highScore_) {
+        std::ofstream filestream("../high_score.txt");
+        filestream << std::to_string(score_);
+        filestream.close();
+        HighScore("../high_score.txt");
+    }
 }
 
 void Game::Score() {
@@ -156,6 +172,8 @@ void Game::Run() {
             SDL_SetWindowTitle(window_, buf);
 
             if (CheckCollision()) {  // If a collision is detected, the game is over
+                Score();  // Update the rendered score
+                SetHighScore();  // Set new high score if high score was beaten
                 title_ = true;
             }
         }
@@ -222,6 +240,9 @@ bool Game::CheckCollision() {
 }
 
 void Game::NewGame() {
+    score_ = 0;
+    std::thread scoreKeeper(&Game::SetScore, this);
+    scoreKeeper.detach();
     enemies_.clear();  // Remove all enemy squares from the enemies_ vector
     title_ = false;
     player_ = new Player(renderer_);

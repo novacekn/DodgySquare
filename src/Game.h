@@ -32,7 +32,7 @@ private:
     SDL_Rect highScoreRect_;
     SDL_Rect playerScoreRect_;
 
-    unsigned int lastTick_, fpsTick_, fps_, frameCount_, score_;
+    unsigned int lastTick_, fpsTick_, fps_, frameCount_, score_, highScore_;
 
     bool running_;
     bool title_;  // Is the title screen showing?
@@ -52,6 +52,8 @@ private:
     void NewGame();
     bool CheckCollision();
     void Score();
+    void SetScore();
+    void SetHighScore();
 };
 
 #endif
