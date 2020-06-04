@@ -40,7 +40,6 @@ void Game::Run() {
 
     SDL_ShowCursor(SDL_DISABLE);  // Do not show the cursor
 
-    background_ = new Background(renderer_);
     fpsTimer_ = new Timer();
     capTimer_ = new Timer();
     player_ = new Player(renderer_);
@@ -95,7 +94,6 @@ void Game::Run() {
         delete enemy;
     }
 
-    delete background_;
     delete fpsTimer_;
     delete capTimer_;
     delete player_;
@@ -122,7 +120,6 @@ void Game::Render() {
     SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
     SDL_RenderClear(renderer_);
 
-    background_->Render();
     player_->Render();
 
     for (auto enemy : enemies_) {

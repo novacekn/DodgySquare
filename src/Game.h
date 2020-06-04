@@ -6,7 +6,6 @@
 #include <iostream>
 #include <vector>
 
-#include "Background.h"
 #include "Timer.h"
 #include "Player.h"
 #include "Enemy.h"
@@ -30,7 +29,6 @@ private:
 
     bool running_;
 
-    Background* background_;
     Timer* fpsTimer_;
     Timer* capTimer_;
     Player* player_;
