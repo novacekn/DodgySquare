@@ -27,10 +27,12 @@ private:
     SDL_Renderer* renderer_;
     SDL_Texture* titleTexture_;
     SDL_Texture* highScoreTexture_;
+    SDL_Texture* playerScoreTexture_;
     SDL_Rect titleRect_;
     SDL_Rect highScoreRect_;
+    SDL_Rect playerScoreRect_;
 
-    unsigned int lastTick_, fpsTick_, fps_, frameCount_;
+    unsigned int lastTick_, fpsTick_, fps_, frameCount_, score_;
 
     bool running_;
     bool title_;  // Is the title screen showing?
@@ -49,6 +51,7 @@ private:
     void HighScore(std::string path);
     void NewGame();
     bool CheckCollision();
+    void Score();
 };
 
 #endif

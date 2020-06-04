@@ -25,10 +25,12 @@ bool Game::Init() {
         return false;
     }
 
+    Score();
     Message("Dodgy Square");  // Title screen
     HighScore("../high_score.txt");  // High score
 
     title_ = true;
+    score_ = 0;
     lastTick_ = SDL_GetTicks();
     fpsTick_ = lastTick_;
     fps_ = 0;
@@ -38,14 +40,14 @@ bool Game::Init() {
 }
 
 void Game::Message(std::string message) {
-    TTF_Font* font = TTF_OpenFont("../res/OpenSans-Regular.ttf", 24);
+    TTF_Font* font = TTF_OpenFont("../res/OpenSans-Regular.ttf", 52);
     SDL_Color color = {255, 255, 255};
     SDL_Surface* msg = TTF_RenderText_Solid(font, message.c_str(), color);
 
     titleTexture_ = SDL_CreateTextureFromSurface(renderer_, msg);
 
     titleRect_.x = (SCREEN_WIDTH / 2) - (msg->w / 2);
-    titleRect_.y = (SCREEN_HEIGHT / 2) - (msg->h / 2);
+    titleRect_.y = (SCREEN_HEIGHT / 2) - (msg->h / 2) - 100;
     titleRect_.w = msg->w;
     titleRect_.h = msg->h;
 
@@ -75,6 +77,26 @@ void Game::HighScore(std::string path) {
     highScoreRect_.y = (SCREEN_HEIGHT / 2) - (msg->h / 2) + 30;
     highScoreRect_.w = msg->w;
     highScoreRect_.h = msg->h;
+
+    SDL_FreeSurface(msg);
+    TTF_CloseFont(font);
+}
+
+void Game::Score() {
+    std::string playerScore = "Your Score: " + std::to_string(score_);
+    TTF_Font* font = TTF_OpenFont("../res/OpenSans-Regular.ttf", 24);
+    SDL_Color color = {255, 255, 255};
+    SDL_Surface* score = TTF_RenderText_Solid(font, playerScore.c_str(), color);
+
+    playerScoreTexture_ = SDL_CreateTextureFromSurface(renderer_, score);
+
+    playerScoreRect_.x = (SCREEN_WIDTH / 2) - (score->w / 2);
+    playerScoreRect_.y = (SCREEN_HEIGHT / 2) - (score->h / 2) - 30;
+    playerScoreRect_.w = score->w;
+    playerScoreRect_.h = score->h;
+
+    SDL_FreeSurface(score);
+    TTF_CloseFont(font);
 }
 
 void Game::Clean() {
@@ -177,6 +199,7 @@ void Game::Render() {
     SDL_RenderClear(renderer_);
 
     if (title_) {
+        SDL_RenderCopy(renderer_, playerScoreTexture_, NULL, &playerScoreRect_);
         SDL_RenderCopy(renderer_, titleTexture_, NULL, &titleRect_);
         SDL_RenderCopy(renderer_, highScoreTexture_, NULL, &highScoreRect_);
     } else {
