@@ -1,6 +1,7 @@
 #include "Background.h"
 
 Background::Background(SDL_Renderer* renderer) : Entity(renderer) {
+    state = STATES::START;
     SDL_Surface* surface = IMG_Load("../res/Background.png");
     texture_ = SDL_CreateTextureFromSurface(renderer, surface);
     width = surface->w;
