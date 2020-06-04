@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <vector>
 
@@ -24,10 +25,13 @@ public:
 private:
     SDL_Window* window_;
     SDL_Renderer* renderer_;
+    SDL_Texture* titleTexture_;
+    SDL_Rect titleRect_;
 
     unsigned int lastTick_, fpsTick_, fps_, frameCount_;
 
     bool running_;
+    bool title_;  // Is the title screen showing?
 
     Timer* fpsTimer_;
     Timer* capTimer_;
@@ -39,6 +43,8 @@ private:
     void Clean();
     void Update();
     void Render();
+    void Message(std::string message);
+    void NewGame();
     bool CheckCollision();
 };
 

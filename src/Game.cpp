@@ -12,6 +12,7 @@ Game::~Game() {}
 
 bool Game::Init() {
     SDL_Init(SDL_INIT_EVERYTHING);
+    TTF_Init();
     window_ = SDL_CreateWindow("DodgySquare", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (!window_) {
         return false;
@@ -22,6 +23,9 @@ bool Game::Init() {
         return false;
     }
 
+    Message("Dodgy Square");  // Title screen
+
+    title_ = true;
     lastTick_ = SDL_GetTicks();
     fpsTick_ = lastTick_;
     fps_ = 0;
@@ -30,19 +34,34 @@ bool Game::Init() {
     return true;
 }
 
+void Game::Message(std::string message) {
+    TTF_Font* font = TTF_OpenFont("../res/OpenSans-Regular.ttf", 24);
+    SDL_Color color = {255, 255, 255};
+    SDL_Surface* msg = TTF_RenderText_Solid(font, message.c_str(), color);
+
+    titleTexture_ = SDL_CreateTextureFromSurface(renderer_, msg);
+
+    titleRect_.x = (SCREEN_WIDTH / 2) - (msg->w / 2);
+    titleRect_.y = (SCREEN_HEIGHT / 2) - (msg->h / 2);
+    titleRect_.w = msg->w;
+    titleRect_.h = msg->h;
+
+    SDL_FreeSurface(msg);
+    TTF_CloseFont(font);
+}
+
 void Game::Clean() {
     SDL_DestroyRenderer(renderer_);
     SDL_DestroyWindow(window_);
 }
 
 void Game::Run() {
-    bool running_ = true;
+    running_ = true;
 
     SDL_ShowCursor(SDL_DISABLE);  // Do not show the cursor
 
     fpsTimer_ = new Timer();
     capTimer_ = new Timer();
-    player_ = new Player(renderer_);
 
     frameCount_ = 0;
 
@@ -56,34 +75,40 @@ void Game::Run() {
                 case SDL_QUIT:
                     running_ = false;
                     break;
+                case SDL_KEYDOWN:
+                    if (e.key.keysym.sym == SDLK_SPACE) {
+                        if (title_) { 
+                            NewGame();
+                        }
+                    }
             }
         }
 
-        player_->Move();
+        if (!title_) {
+            player_->Move();
 
-        fps_ = frameCount_ / (fpsTimer_->GetTicks() / 1000.0f);
-        if (fps_ > 2000000) {
-            fps_ = 0;
-        }
+            fps_ = frameCount_ / (fpsTimer_->GetTicks() / 1000.0f);
+            if (fps_ > 2000000) { fps_ = 0; }
 
-        int random = rand() % 100;
-        if (random < 20) {  // Spawn enemy squares randomly based on this chance
-            enemy_ = new Enemy(renderer_);
-            enemies_.push_back(enemy_);
-        }
+            int random = rand() % 100;
+            if (random < 20) {  // Spawn enemy squares randomly based on this chance
+                enemy_ = new Enemy(renderer_);
+                enemies_.push_back(enemy_);
+            }
 
-        char buf[100];
-        frameCount_++;
-        int frameTicks = capTimer_->GetTicks();
-        if (frameTicks < FPS_TICKS) {
-            SDL_Delay(FPS_TICKS - frameTicks);
-        }
+            char buf[100];
+            frameCount_++;
+            int frameTicks = capTimer_->GetTicks();
+            if (frameTicks < FPS_TICKS) {
+                SDL_Delay(FPS_TICKS - frameTicks);
+            }
 
-        snprintf(buf, 100, "DodgySquare (FPS: %u)", fps_);
-        SDL_SetWindowTitle(window_, buf);
+            snprintf(buf, 100, "DodgySquare (FPS: %u)", fps_);
+            SDL_SetWindowTitle(window_, buf);
 
-        if (CheckCollision()) {  // If a collision is detected, the game is over
-            running_ = false;
+            if (CheckCollision()) {  // If a collision is detected, the game is over
+                title_ = true;
+            }
         }
 
         Update();
@@ -99,19 +124,23 @@ void Game::Run() {
     delete player_;
 
     Clean();
+    TTF_Quit();
     SDL_Quit();
 }
 
 void Game::Update() {
-    for (auto enemy : enemies_) {
-        enemy->Update();
-    }
+    if (title_) {
+    } else {
+        for (auto enemy : enemies_) {
+            enemy->Update();
+        }
 
-    // Remove enemies that are not alive
-    for (size_t i = 0; i < enemies_.size(); ++i) {
-        if (!enemies_[i]->IsAlive()) {
-            delete enemies_[i];
-            enemies_.erase(enemies_.begin() + i);
+        // Remove enemies that are not alive
+        for (size_t i = 0; i < enemies_.size(); ++i) {
+            if (!enemies_[i]->IsAlive()) {
+                delete enemies_[i];
+                enemies_.erase(enemies_.begin() + i);
+            }
         }
     }
 }
@@ -120,12 +149,15 @@ void Game::Render() {
     SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
     SDL_RenderClear(renderer_);
 
-    player_->Render();
+    if (title_) {
+        SDL_RenderCopy(renderer_, titleTexture_, NULL, &titleRect_);
+    } else {
+        player_->Render();
 
-    for (auto enemy : enemies_) {
-        enemy->Render();
+        for (auto enemy : enemies_) {
+            enemy->Render();
+        }
     }
-
     SDL_RenderPresent(renderer_);
 }
 
@@ -136,4 +168,10 @@ bool Game::CheckCollision() {
         }
     }
     return false;
+}
+
+void Game::NewGame() {
+    enemies_.clear();
+    title_ = false;
+    player_ = new Player(renderer_);
 }
