@@ -3,3 +3,4 @@ build
 .code
 .settings
 high_score.txt
+.DS_Store
