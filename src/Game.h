@@ -26,7 +26,9 @@ private:
     SDL_Window* window_;
     SDL_Renderer* renderer_;
     SDL_Texture* titleTexture_;
+    SDL_Texture* highScoreTexture_;
     SDL_Rect titleRect_;
+    SDL_Rect highScoreRect_;
 
     unsigned int lastTick_, fpsTick_, fps_, frameCount_;
 
@@ -44,6 +46,7 @@ private:
     void Update();
     void Render();
     void Message(std::string message);
+    void HighScore(std::string path);
     void NewGame();
     bool CheckCollision();
 };

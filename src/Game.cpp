@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <fstream>
+#include <sstream>
 
 #include "Game.h"
 
@@ -24,6 +26,7 @@ bool Game::Init() {
     }
 
     Message("Dodgy Square");  // Title screen
+    HighScore("../high_score.txt");  // High score
 
     title_ = true;
     lastTick_ = SDL_GetTicks();
@@ -48,6 +51,30 @@ void Game::Message(std::string message) {
 
     SDL_FreeSurface(msg);
     TTF_CloseFont(font);
+}
+
+void Game::HighScore(std::string path) {
+    std::string line, high;
+    std::string high_score = "High Score: ";
+    std::ifstream filestream(path);
+    if (filestream.is_open()) {
+        while (std::getline(filestream, line)) {
+            std::istringstream linestream(line);
+            linestream >> high;
+            high_score += high;
+        }
+    }
+
+    TTF_Font* font = TTF_OpenFont("../res/OpenSans-Regular.ttf", 24);
+    SDL_Color color = {255, 255, 255};
+    SDL_Surface* msg = TTF_RenderText_Solid(font, high_score.c_str(), color);
+
+    highScoreTexture_ = SDL_CreateTextureFromSurface(renderer_, msg);
+
+    highScoreRect_.x = (SCREEN_WIDTH / 2) - (msg->w / 2);
+    highScoreRect_.y = (SCREEN_HEIGHT / 2) - (msg->h / 2) + 30;
+    highScoreRect_.w = msg->w;
+    highScoreRect_.h = msg->h;
 }
 
 void Game::Clean() {
@@ -151,6 +178,7 @@ void Game::Render() {
 
     if (title_) {
         SDL_RenderCopy(renderer_, titleTexture_, NULL, &titleRect_);
+        SDL_RenderCopy(renderer_, highScoreTexture_, NULL, &highScoreRect_);
     } else {
         player_->Render();
 
@@ -171,7 +199,7 @@ bool Game::CheckCollision() {
 }
 
 void Game::NewGame() {
-    enemies_.clear();
+    enemies_.clear();  // Remove all enemy squares from the enemies_ vector
     title_ = false;
     player_ = new Player(renderer_);
 }
