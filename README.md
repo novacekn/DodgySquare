@@ -1,5 +1,5 @@
 # Dodgy Square
-![](res/Gameplay.gif)
+![Gameplay](res/Gameplay.gif)
 
 This is my capstone submission for the Udacity C++ course. I chose to pursue the game option for the capstone project. I have used SDL2 and made a very simple game I call 'Dodgy Square'. The game play is very straight-forward. The player is the green square and you must dodge the falling red squares. You can move the player object (green square) using the AWSD keys.
 * A = Left
