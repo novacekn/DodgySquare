@@ -22,7 +22,7 @@ The game requires
     * Linux: apt-get install libsdl2-dev
 * SDL2_image
     * macOS: brew install sdl2_image
-    * Linux: apt-get install libsdl2-image-2.0.0-dev
+    * Linux: apt-get install libsdl2-image-dev
 * SDL2_ttf
     * macOS: brew install sdl2_ttf
     * Linux: apt-get install libsdl2-ttf-dev
